@@ -12,7 +12,3 @@ test:
 
 lint:
 		npx eslint .
-
-production:
-		rm -rf dist
-		NODE_ENV=production npx webpack
