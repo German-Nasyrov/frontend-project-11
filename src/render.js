@@ -88,16 +88,19 @@ const createPostElement = (post, state, i18n) => {
   const postElement = document.createElement('li');
   postElement.setAttribute(
     'class',
-    'list-group-item d-flex justify-content-between align-items-start border-0 border-end-0',
+    `list-group-item d-flex justify-content-between
+     salign-items-start border-0 border-end-0`,
   );
 
   const postLink = document.createElement('a');
   postLink.setAttribute('href', `${post.postLink}`);
+  postLink.setAttribute('class', 'post-font-size');
 
   if (state.visitedPostsID.includes(post.postID)) {
-    postLink.setAttribute('class', 'fw-normal text-muted post-font-size');
+    postLink.classList.add('fw-normal');
+    postLink.classList.add('text-muted');
   } else {
-    postLink.setAttribute('class', 'fw-bold post-font-size');
+    postLink.classList.add('fw-bold');
   }
 
   postLink.setAttribute('data-id', `${post.postID}`);
