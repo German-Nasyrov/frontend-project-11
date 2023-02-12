@@ -6,6 +6,8 @@ import validate from './validator.js';
 import getData from './getData.js';
 import parse from './parser.js';
 
+const delay = 5000;
+
 export default (i18n) => {
   const htmlElements = {
     form: document.querySelector('form'),
@@ -43,7 +45,6 @@ export default (i18n) => {
   };
 
   const updateRssElement = () => {
-    const delay = 5000;
     const promises = state.rssLinks.map((url) => {
       getData(url)
         .then((rss) => {
