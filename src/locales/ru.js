@@ -8,6 +8,7 @@ export default {
       invalidRSS: 'Ресурс не содержит валидный RSS',
       invalidUnknown: 'Возникла неизвестная ошибка. Попробуйте еще раз',
       invalidNetwork: 'Ошибка сети',
+      feedUpdateError: 'Ошибка при обновлении фида: ',
       loading: 'Идет загрузка...',
     },
     modal: {
@@ -17,5 +18,9 @@ export default {
     posts: 'Посты',
     feeds: 'Фиды',
     postButtonRead: 'Просмотр',
+    errors: {
+      unknownState: 'Состояние не определено:',
+      unknownPath: 'Неизвестный путь:',
+    },
   },
 };
