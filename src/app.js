@@ -8,7 +8,7 @@ import validate from './validator.js';
 import parse from './parser.js';
 import resources from './locales/index.js';
 
-const runApp = () => {
+export default () => {
   const htmlElements = {
     form: document.querySelector('form'),
     input: document.querySelector('#url-input'),
@@ -58,25 +58,22 @@ const runApp = () => {
   const updateRssElement = () => {
     const delay = 5000;
     const promises = state.rssLinks.map((url) => {
-      getData(url)
-        .then((rss) => {
-          const existingFeed = state.feeds.find((feed) => feed.feedLink === url);
-          const { posts } = parse(rss.data.contents);
-          const newPosts = posts.filter((post) => {
-            const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
-            return !collOfPostsLinks.includes(post.postLink);
-          });
-          if (newPosts.length === 0) return;
-          newPosts.map((post) => {
-            post.postID = uniqueId();
-            post.feedID = existingFeed.id;
-            return (post.postID, post.feedID);
-          });
-          watchedState.posts.push(...newPosts);
-        })
-        .catch((error) => {
-          throw new Error(`${i18nInstance.t('feedback.feedUpdateError')}${url}`, error);
+      getData(url).then((rss) => {
+        const existingFeed = state.feeds.find((feed) => feed.feedLink === url);
+        const { posts } = parse(rss.data.contents);
+        const newPosts = posts.filter((post) => {
+          const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
+          return !collOfPostsLinks.includes(post.postLink);
         });
+        if (newPosts.length === 0) return;
+        newPosts.map((post) => {
+          post.postID = uniqueId();
+          post.feedID = existingFeed.id;
+          return (post.postID, post.feedID);
+        });
+        watchedState.posts.push(...newPosts);
+      })
+        .catch((error) => { throw new Error(`${i18nInstance.t('feedback.feedUpdateError')}${url}`, error); });
       return state;
     });
     Promise.all(promises)
@@ -116,5 +113,3 @@ const runApp = () => {
 
   updateRssElement();
 };
-
-export default runApp;

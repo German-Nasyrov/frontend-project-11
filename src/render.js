@@ -86,25 +86,11 @@ const createFeedElement = (feed) => {
 
 const createPostElement = (post, state, i18next) => {
   const postElement = document.createElement('li');
-  postElement.classList.add(
-    'list-group-item',
-    'd-flex',
-    'justify-content-between',
-    'align-items-start',
-    'border-0',
-    'border-end-0',
-    'post-font-size',
-  );
-
+  postElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0', 'post-font-size');
   const postLink = document.createElement('a');
   postLink.setAttribute('href', `${post.postLink}`);
-
-  if (state.visitedPostsID.includes(post.postID)) {
-    postLink.classList.add('fw-normal', 'text-muted');
-  } else {
-    postLink.classList.add('fw-bold');
-  }
-
+  if (state.visitedPostsID.includes(post.postID)) postLink.classList.add('fw-normal', 'text-muted');
+  else { postLink.classList.add('fw-bold'); }
   postLink.setAttribute('data-id', `${post.postID}`);
   postLink.setAttribute('target', '_blank');
   postLink.setAttribute('rel', 'noopener noreferrer');
