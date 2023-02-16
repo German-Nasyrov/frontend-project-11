@@ -3,6 +3,7 @@
 System requirements:
 
 Stable internet connection;
+
 Internet browser except Internet Explorer;
 
 ### Hexlet tests and linter status:
