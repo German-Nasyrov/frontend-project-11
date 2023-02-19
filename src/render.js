@@ -1,7 +1,5 @@
 const renderFormFillingSuccess = (htmlElements, i18next) => {
-  const {
-    form, input, submit, feedback,
-  } = htmlElements;
+  const { form, input, submit, feedback, } = htmlElements;
   submit.disabled = false;
   input.classList.remove('is-invalid');
   feedback.classList.remove('text-danger');
@@ -113,7 +111,7 @@ const readButtonHandler = (state, htmlElements, i18next) => {
   const modalDescription = modal.querySelector('.modal-description');
   const modalReadButton = modal.querySelector('.modal-link');
   const modalCloseButton = modal.querySelector('.modal-close');
-  const currentPost = state.posts.find((post) => post.postID === state.currentVisitedPostID);
+  const currentPost = state.posts.find((post) => post.postID === state.visitedPostsID.at(-1));
   modalTitle.textContent = currentPost?.postTitle;
   modalDescription.textContent = currentPost?.postDescription;
   modalReadButton.setAttribute('href', `${currentPost?.postLink}`);
@@ -143,6 +141,7 @@ const renderContent = (state, htmlElements, i18next) => {
 export default (state, htmlElements, i18next) => (path) => {
   switch (path) {
     case 'formState':
+    case 'rssLinks':
       return formStateHandler(state, htmlElements, i18next);
     case 'feeds':
     case 'posts':

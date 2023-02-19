@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 import uniqueId from 'lodash/uniqueId.js';
 import i18next from 'i18next';
@@ -25,6 +24,7 @@ export default () => {
     feeds: [],
     posts: [],
     visitedPostsID: [],
+    error: '',
   };
 
   const i18nInstance = i18next.createInstance();
@@ -32,16 +32,20 @@ export default () => {
 
   const watchedState = onChange(state, render(state, htmlElements, i18nInstance));
 
-  const addNewRssElement = (parsedRss, link) => {
-    const { feed, posts } = parsedRss;
+  const addNewFeed = (parsedRss, link) => {
+    const { feed } = parsedRss;
     feed.id = uniqueId();
     feed.feedLink = link;
     watchedState.feeds.unshift(feed);
-    posts.map((post) => {
+  };
+
+  const addNewPosts = (parsedRss, feed) => {
+    const { posts } = parsedRss;
+    posts.forEach((post) => {
       const { postTitle, postDescription, postLink } = post;
       const postID = uniqueId();
       const feedID = feed.id;
-      return watchedState.posts.unshift({
+      watchedState.posts.unshift({
         postTitle, postDescription, postLink, postID, feedID,
       });
     });
@@ -61,19 +65,18 @@ export default () => {
       getData(url).then((rss) => {
         const existingFeed = state.feeds.find((feed) => feed.feedLink === url);
         const { posts } = parse(rss.data.contents);
+        const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
         const newPosts = posts.filter((post) => {
-          const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
           return !collOfPostsLinks.includes(post.postLink);
         });
         if (newPosts.length === 0) return;
-        newPosts.map((post) => {
+        newPosts.forEach((post) => {
           post.postID = uniqueId();
           post.feedID = existingFeed.id;
-          return (post.postID, post.feedID);
         });
         watchedState.posts.push(...newPosts);
       })
-        .catch((error) => { throw new Error(`${i18nInstance.t('feedback.feedUpdateError')}${url}`, error); });
+        .catch(() => { throw new Error(`${i18nInstance.t('feedback.feedUpdateError')}${url}`); });
       return state;
     });
     Promise.all(promises)
@@ -89,15 +92,16 @@ export default () => {
       })
       .then((rss) => {
         const parsedRss = parse(rss.data.contents);
-        addNewRssElement(parsedRss, link);
-        state.rssLinks.push(link);
-        state.error = '';
+        addNewFeed(parsedRss, link);
+        const feed = state.feeds.at(0);
+        addNewPosts(parsedRss, feed);
+        watchedState.rssLinks.push(link);
         watchedState.formState = 'success';
       })
       .catch((error) => {
-        state.error = error.type ?? error.message.toLowerCase();
-        watchedState.formState = 'error';
-      });
+        try { watchedState.error = error.type ?? error.message.toLowerCase(); } 
+        catch { watchedState.formState = 'error'; }
+      })
   };
 
   htmlElements.form.addEventListener('submit', (event) => {
@@ -107,8 +111,7 @@ export default () => {
   });
 
   htmlElements.postsContainer.addEventListener('click', (event) => {
-    state.currentVisitedPostID = event.target.dataset.id;
-    watchedState.visitedPostsID.push(event.target.dataset.id);
+    watchedState.visitedPostsID.push(event.target.dataset.id); 
   });
 
   updateRssElement();

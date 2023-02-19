@@ -9,11 +9,11 @@ const parse = (data) => {
 
   const posts = [];
   const postsElements = xmlDocument.querySelectorAll('item');
-  postsElements.forEach((post) => {
+  Array.from(postsElements).map((post) => {
     const postTitle = post.querySelector('title').textContent;
     const postDescription = post.querySelector('description').textContent;
     const postLink = post.querySelector('link').textContent;
-    posts.push({ postTitle, postDescription, postLink });
+    return posts.push({ postTitle, postDescription, postLink });
   });
 
   return {
