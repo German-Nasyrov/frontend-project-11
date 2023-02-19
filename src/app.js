@@ -66,9 +66,7 @@ export default () => {
         const existingFeed = state.feeds.find((feed) => feed.feedLink === url);
         const { posts } = parse(rss.data.contents);
         const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
-        const newPosts = posts.filter((post) => {
-          return !collOfPostsLinks.includes(post.postLink);
-        });
+        const newPosts = posts.filter((post) => !collOfPostsLinks.includes(post.postLink));
         if (newPosts.length === 0) return;
         newPosts.forEach((post) => {
           post.postID = uniqueId();
@@ -99,9 +97,12 @@ export default () => {
         watchedState.formState = 'success';
       })
       .catch((error) => {
-        try { watchedState.error = error.type ?? error.message.toLowerCase(); } 
-        catch { watchedState.formState = 'error'; }
-      })
+        try {
+          watchedState.error = error.type ?? error.message.toLowerCase();
+        } catch {
+          watchedState.formState = 'error';
+        }
+      });
   };
 
   htmlElements.form.addEventListener('submit', (event) => {
@@ -111,7 +112,7 @@ export default () => {
   });
 
   htmlElements.postsContainer.addEventListener('click', (event) => {
-    watchedState.visitedPostsID.push(event.target.dataset.id); 
+    watchedState.visitedPostsID.push(event.target.dataset.id);
   });
 
   updateRssElement();

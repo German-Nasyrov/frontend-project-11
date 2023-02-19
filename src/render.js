@@ -1,5 +1,7 @@
 const renderFormFillingSuccess = (htmlElements, i18next) => {
-  const { form, input, submit, feedback, } = htmlElements;
+  const {
+    form, input, submit, feedback,
+  } = htmlElements;
   submit.disabled = false;
   input.classList.remove('is-invalid');
   feedback.classList.remove('text-danger');
