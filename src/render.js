@@ -74,11 +74,11 @@ const createFeedElement = (feed) => {
   const feedElement = document.createElement('li');
   feedElement.classList.add('list-group-item', 'border-0', 'border-end-0');
   const feedHeader = document.createElement('h3');
-  feedHeader.textContent = feed.feedTitle;
+  feedHeader.textContent = feed.title;
   feedHeader.classList.add('h6', 'm-0');
   feedElement.append(feedHeader);
   const feedBody = document.createElement('p');
-  feedBody.textContent = feed.feedDescription;
+  feedBody.textContent = feed.description;
   feedBody.classList.add('m-0', 'small', 'text-black-50');
   feedElement.append(feedBody);
   return feedElement;
@@ -144,6 +144,7 @@ export default (state, htmlElements, i18next) => (path) => {
   switch (path) {
     case 'formState':
     case 'rssLinks':
+    case 'error':
       return formStateHandler(state, htmlElements, i18next);
     case 'feeds':
     case 'posts':
