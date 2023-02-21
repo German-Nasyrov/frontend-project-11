@@ -18,6 +18,9 @@ export default () => {
     modal: document.querySelector('.modal'),
   };
 
+  const i18nInstance = i18next.createInstance();
+  i18nInstance.init({ lng: 'ru', debug: true, resources });
+
   const state = {
     formState: 'filling',
     rssLinks: [],
@@ -27,15 +30,12 @@ export default () => {
     error: '',
   };
 
-  const i18nInstance = i18next.createInstance();
-  i18nInstance.init({ lng: 'ru', debug: true, resources });
-
   const watchedState = onChange(state, render(state, htmlElements, i18nInstance));
 
   const addNewFeed = (parsedRss, link) => {
     const { feed } = parsedRss;
     feed.id = uniqueId();
-    feed.feedLink = link;
+    feed.link = link;
     watchedState.feeds.unshift(feed);
   };
 
@@ -63,14 +63,15 @@ export default () => {
     const delay = 5000;
     const promises = state.rssLinks.map((url) => {
       getData(url).then((rss) => {
-        const existingFeed = state.feeds.find((feed) => feed.feedLink === url);
+        const existingFeed = state.feeds.find((feed) => feed.link === url);
         const { posts } = parse(rss.data.contents);
         const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
         const newPosts = posts.filter((post) => !collOfPostsLinks.includes(post.postLink));
         if (newPosts.length === 0) return;
-        newPosts.forEach((post) => {
+        newPosts.map((post) => {
           post.postID = uniqueId();
           post.feedID = existingFeed.id;
+          return post;
         });
         watchedState.posts.push(...newPosts);
       })
@@ -97,11 +98,8 @@ export default () => {
         watchedState.formState = 'success';
       })
       .catch((error) => {
-        try {
-          watchedState.error = error.type ?? error.message.toLowerCase();
-        } catch {
-          watchedState.formState = 'error';
-        }
+        watchedState.error = error.type ?? error.message.toLowerCase();
+        watchedState.formState = 'error';
       });
   };
 
