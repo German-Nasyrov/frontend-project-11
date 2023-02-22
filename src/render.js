@@ -46,6 +46,10 @@ const formStateHandler = (state, htmlElements, i18next) => {
       input.classList.remove('is-invalid');
       feedback.textContent = '';
       break;
+    case 'adding feed':
+      submit.disabled = true;
+      feedback.textContent = i18next.t('feedback.addingFeed');
+      break;
     case 'sending':
       submit.disabled = true;
       feedback.textContent = i18next.t('feedback.loading');

@@ -8,8 +8,8 @@ export default {
       invalidRSS: 'Ресурс не содержит валидный RSS',
       invalidUnknown: 'Возникла неизвестная ошибка. Попробуйте еще раз',
       invalidNetwork: 'Ошибка сети',
-      feedUpdateError: 'Ошибка при обновлении фида: ',
       loading: 'Идет загрузка...',
+      addingFeed: 'Добавление нового фида...',
     },
     modal: {
       read: 'Читать полностью',

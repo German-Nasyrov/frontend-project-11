@@ -1,5 +1,6 @@
 import onChange from 'on-change';
-import uniqueId from 'lodash/uniqueId.js';
+import uniqueId from 'lodash.uniqueid';
+import cloneDeep from 'lodash.clonedeep';
 import i18next from 'i18next';
 import axios from 'axios';
 import render from './render.js';
@@ -32,14 +33,14 @@ export default () => {
 
   const watchedState = onChange(state, render(state, htmlElements, i18nInstance));
 
-  const addNewFeed = (parsedRss, link) => {
+  const getFeed = (parsedRss, link) => {
     const { feed } = parsedRss;
     feed.id = uniqueId();
     feed.link = link;
     watchedState.feeds.unshift(feed);
   };
 
-  const addNewPosts = (parsedRss, feed) => {
+  const getPost = (parsedRss, feed) => {
     const { posts } = parsedRss;
     posts.forEach((post) => {
       const { postTitle, postDescription, postLink } = post;
@@ -66,34 +67,38 @@ export default () => {
         const existingFeed = state.feeds.find((feed) => feed.link === url);
         const { posts } = parse(rss.data.contents);
         const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
-        const newPosts = posts.filter((post) => !collOfPostsLinks.includes(post.postLink));
-        if (newPosts.length === 0) return;
-        newPosts.map((post) => {
+        const filterNewPosts = posts.filter((post) => !collOfPostsLinks.includes(post.postLink));
+        if (filterNewPosts.length === 0) return;
+        const mapNewPosts = cloneDeep(filterNewPosts);
+        mapNewPosts.map((post) => {
           post.postID = uniqueId();
           post.feedID = existingFeed.id;
-          return post;
+          return (post.postID, post.feedID);
         });
-        watchedState.posts.push(...newPosts);
+        watchedState.posts.push(...mapNewPosts);
       })
-        .catch(() => { throw new Error(`${i18nInstance.t('feedback.feedUpdateError')}${url}`); });
+        .catch((error) => { console.log(error.message); });
       return state;
     });
     Promise.all(promises)
       .then(setTimeout(() => updateRssElement(), delay))
-      .catch((error) => { throw new Error(error); });
+      .catch((error) => { console.log(error.message); });
   };
 
-  const linkHandler = (link) => {
+  const addNewFeed = (link) => {
     validate(link, state.rssLinks)
       .then((validURL) => {
         watchedState.formState = 'sending';
         return getData(validURL);
       })
       .then((rss) => {
+        watchedState.formState = 'adding feed';
         const parsedRss = parse(rss.data.contents);
-        addNewFeed(parsedRss, link);
+        getFeed(parsedRss, link);
         const feed = state.feeds.at(0);
-        addNewPosts(parsedRss, feed);
+        getPost(parsedRss, feed);
+      })
+      .then(() => {
         watchedState.rssLinks.push(link);
         watchedState.formState = 'success';
       })
@@ -106,7 +111,7 @@ export default () => {
   htmlElements.form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    linkHandler(formData.get('url'));
+    addNewFeed(formData.get('url'));
   });
 
   htmlElements.postsContainer.addEventListener('click', (event) => {
