@@ -97,8 +97,6 @@ export default () => {
         getFeed(parsedRss, link);
         const feed = state.feeds.at(0);
         getPost(parsedRss, feed);
-      })
-      .then(() => {
         watchedState.rssLinks.push(link);
         watchedState.formState = 'success';
       })
