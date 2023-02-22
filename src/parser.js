@@ -15,7 +15,7 @@ const parse = (data) => {
     const postLink = post.querySelector('link').textContent;
     return { postTitle, postDescription, postLink };
   });
-  
+
   return {
     feed: { title, description },
     posts,
