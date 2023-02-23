@@ -2,10 +2,7 @@ const parse = (data) => {
   const parser = new DOMParser();
   const xmlDocument = parser.parseFromString(data, 'application/xml');
   const parseErrorElement = xmlDocument.querySelector('parsererror');
-  if (parseErrorElement) {
-    console.log(parseErrorElement.textContent);
-    throw new Error('invalid rss');
-  }
+  if (parseErrorElement) throw new Error(parseErrorElement.textContent);
   const title = xmlDocument.querySelector('title').textContent;
   const description = xmlDocument.querySelector('description').textContent;
   const postsElements = xmlDocument.querySelectorAll('item');
