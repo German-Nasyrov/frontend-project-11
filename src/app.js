@@ -1,6 +1,5 @@
 import onChange from 'on-change';
 import uniqueId from 'lodash.uniqueid';
-import cloneDeep from 'lodash.clonedeep';
 import i18next from 'i18next';
 import axios from 'axios';
 import render from './render.js';
@@ -24,6 +23,7 @@ export default () => {
 
   const state = {
     formState: 'filling',
+    validationState: '',
     rssLinks: [],
     feeds: [],
     posts: [],
@@ -69,8 +69,7 @@ export default () => {
         const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
         const filterNewPosts = posts.filter((post) => !collOfPostsLinks.includes(post.postLink));
         if (filterNewPosts.length === 0) return;
-        const mapNewPosts = cloneDeep(filterNewPosts);
-        mapNewPosts.map((post) => {
+        const mapNewPosts = filterNewPosts.map((post) => {
           post.postID = uniqueId();
           post.feedID = existingFeed.id;
           return (post.postID, post.feedID);
@@ -88,6 +87,7 @@ export default () => {
   const addNewFeed = (link) => {
     validate(link, state.rssLinks)
       .then((validURL) => {
+        watchedState.validationState = 'valid';
         watchedState.formState = 'sending';
         return getData(validURL);
       })
@@ -102,6 +102,7 @@ export default () => {
       })
       .catch((error) => {
         watchedState.error = error.type ?? error.message.toLowerCase();
+        watchedState.validationState = 'invalid';
         watchedState.formState = 'error';
       });
   };
