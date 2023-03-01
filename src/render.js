@@ -17,18 +17,21 @@ const renderFormFillingError = (state, htmlElements, i18next) => {
   input.classList.add('is-invalid');
   feedback.classList.remove('text-success');
   feedback.classList.add('text-danger');
-  if (state.error === 'url') {
-    feedback.textContent = i18next.t('feedback.invalidUrl');
-  } else if (state.error === 'required') {
-    feedback.textContent = i18next.t('feedback.invalidRequired');
-  } else if (state.error === 'notOneOf') {
-    feedback.textContent = i18next.t('feedback.invalidNotOneOf');
-  } else if (state.error === 'network error') {
-    feedback.textContent = i18next.t('feedback.invalidNetwork');
-  } else if (state.error.includes('this page contains the following errors')) {
-    feedback.textContent = i18next.t('feedback.invalidRSS');
-  } else {
-    feedback.textContent = i18next.t('feedback.invalidUnknown');
+  switch (state.error) {
+    case 'url':
+      feedback.textContent = i18next.t('feedback.invalidUrl');
+      break;
+    case 'required':
+      feedback.textContent = i18next.t('feedback.invalidRequired');
+      break;
+    case 'notOneOf':
+      feedback.textContent = i18next.t('feedback.invalidNotOneOf');
+      break;
+    case 'network error':
+      feedback.textContent = i18next.t('feedback.invalidNetwork');
+      break;
+    default:
+      feedback.textContent = i18next.t('feedback.invalidRSS');
   }
 };
 
@@ -105,7 +108,7 @@ const createPostElement = (post, state, i18next) => {
   return postElement;
 };
 
-const readButtonHandler = (state, htmlElements, i18next) => {
+const postElementReadButton = (state, htmlElements, i18next) => {
   const { modal } = htmlElements;
   const modalTitle = modal.querySelector('.modal-title');
   const modalDescription = modal.querySelector('.modal-description');
@@ -149,7 +152,7 @@ export default (state, htmlElements, i18next) => (path) => {
     case 'posts':
       return renderContent(state, htmlElements, i18next);
     case 'visitedPostsID':
-      readButtonHandler(state, htmlElements, i18next);
+      postElementReadButton(state, htmlElements, i18next);
       return renderContent(state, htmlElements, i18next);
     default:
       throw new Error(`${i18next.t('errors.unknownPath')} ${path}`);
