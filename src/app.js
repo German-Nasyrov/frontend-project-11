@@ -52,13 +52,15 @@ export default () => {
     });
   };
 
-  const getData = (url) => {
+  const prepareProxy = (url) => {
     const proxy = 'https://allorigins.hexlet.app/get';
     const urlWithProxy = new URL(proxy);
     urlWithProxy.searchParams.set('disableCache', 'true');
     urlWithProxy.searchParams.set('url', url);
-    return axios.get(urlWithProxy);
+    return urlWithProxy;
   };
+
+  const getData = (url) => axios.get(prepareProxy(url));
 
   const updateRssElement = () => {
     const delay = 5000;
@@ -80,15 +82,13 @@ export default () => {
       return state;
     });
     Promise.all(promises)
-      .then(setTimeout(() => updateRssElement(), delay))
-      .catch((error) => { console.log(error.message); });
+      .then(setTimeout(() => updateRssElement(), delay));
   };
 
   const addNewFeed = (link) => {
     validate(link, state.rssLinks)
       .then((validURL) => {
         watchedState.validationState = 'valid';
-        watchedState.formState = 'sending';
         return getData(validURL);
       })
       .then((rss) => {
