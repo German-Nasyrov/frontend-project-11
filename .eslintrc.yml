@@ -9,7 +9,7 @@ parserOptions:
   sourceType: module
 rules:
   import/prefer-default-export: 'warn'
-  import/no-extraneous-dependencies: [error, { devDependencies: true }]
+  import/no-extraneous-dependencies: [off, { devDependencies: true }]
   no-console: 0
   import/extensions:
     - error
