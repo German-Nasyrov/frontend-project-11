@@ -6,7 +6,6 @@ export default {
       invalidRequired: 'Не должно быть пустым',
       invalidUrl: 'Ссылка должна быть валидным URL',
       invalidRSS: 'Ресурс не содержит валидный RSS',
-      invalidUnknown: 'Возникла неизвестная ошибка. Попробуйте еще раз',
       invalidNetwork: 'Ошибка сети',
       loading: 'Идет загрузка...',
       addingFeed: 'Добавление нового фида...',
