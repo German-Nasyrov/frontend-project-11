@@ -71,12 +71,12 @@ export default () => {
         const collOfPostsLinks = state.posts.map((postInState) => postInState.postLink);
         const filterNewPosts = posts.filter((post) => !collOfPostsLinks.includes(post.postLink));
         if (filterNewPosts.length === 0) return;
-        const mapNewPosts = filterNewPosts.map((post) => {
+        filterNewPosts.map((post) => {
           post.postID = uniqueId();
           post.feedID = existingFeed.id;
           return (post.postID, post.feedID);
         });
-        watchedState.posts.push(...mapNewPosts);
+        watchedState.posts.push(...filterNewPosts);
       })
         .catch((error) => { console.log(error.message); });
       return state;
@@ -89,10 +89,10 @@ export default () => {
     validate(link, state.rssLinks)
       .then((validURL) => {
         watchedState.validationState = 'valid';
+        watchedState.formState = 'adding feed';
         return getData(validURL);
       })
       .then((rss) => {
-        watchedState.formState = 'adding feed';
         const parsedRss = parse(rss.data.contents);
         getFeed(parsedRss, link);
         const feed = state.feeds.at(0);
